@@ -1,0 +1,55 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+.hidden{
+    display: none;
+}
+
+.card {
+    background: #fff;
+    box-shadow: 13px 13px 28px 2px rgba(0, 0, 0, 0.035);
+    padding: 7px 15px;
+    width: 25%;
+    float: right;
+    position: fixed;
+    bottom: 10px;
+    right: 50px;
+    z-index: 1000000;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.conv-form-wrapper{
+    /*display: none;*/
+}
+
+div.conv-form-wrapper div.wrapper-messages {
+    height: 300px !important;
+}
+#chat-header .close-chat {
+
+    background-image: url("../img/close.png");
+    background-position: center right;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+    float: right;
+}
+#chat-header .open-chat {
+    display: none;
+    background-image: url("../img/open.png");
+    background-position: center right;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 25px;
+    height: 25px;
+    float: right;
+}
+
+div.conv-form-wrapper div.options div.option {
+    float: left;
+}
