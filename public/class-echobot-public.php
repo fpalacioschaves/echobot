@@ -248,28 +248,43 @@ class Echobot_Public {
 		);
 
 		// The query
-		$query = new WP_Query( array(
+		$featured = new WP_Query( array(
 			'post_type'           => 'product',
 			'post_status'         => 'publish',
 			'ignore_sticky_posts' => 1,
-			'posts_per_page'      => -1,
+			'posts_per_page'      => 5,
 			'orderby'             => "date",
 			'order'               => 'DESC',
 			'tax_query'           => $tax_query // <===
 		) );
 
-		var_dump($query);
+		//var_dump($featured);
+
+		if ( $featured->have_posts() ) {
+
+			$featured_products = array();
+
+			while ( $featured->have_posts() ) {
+				$featured->the_post();
+				global $post;
+				$featured_products[] = array(
+					"id" => $post->ID,
+					"product_title" => $post->post_title,
+					"product_name" => $post->post_name
+				);
+			}
+		}
 
 
-		ob_start();
+		//ob_start();
 
-		include plugin_dir_path(__FILE__) . 'partials/echobot_featured.php';
+		//include plugin_dir_path(__FILE__) . 'partials/echobot_featured.php';
 
-		$featured_message = ob_get_contents();
+		//$featured_message = ob_get_contents();
 
-		ob_end_clean();
+		//ob_end_clean();
 
-		echo $featured_message;
+		echo json_encode($featured_products);
 
 		wp_die();
 

@@ -86,7 +86,7 @@
                                         action: "echobot_suggested_products",
                                     })
 
-                                    .done(function (result) {
+                                   /* .done(function (result) {
                                         console.log(result)
                                         var result_array = jQuery.parseJSON(result);
                                         if(result_array.title == "no_response"){
@@ -111,7 +111,7 @@
 
                                         setTimeout(ready, Math.random()*500+100);
 
-                                    });
+                                    });*/
 
                             }
 
