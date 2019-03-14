@@ -26,9 +26,8 @@
     /*display: none;*/
 }
 
-div.conv-form-wrapper div.wrapper-messages {
-    height: 300px !important;
-}
+
+
 #chat-header .close-chat {
 
     background-image: url("../img/close.png");
@@ -52,4 +51,27 @@ div.conv-form-wrapper div.wrapper-messages {
 
 div.conv-form-wrapper div.options div.option {
     float: left;
+}
+
+
+elemento {
+
+    margin-bottom: 0px;
+    max-height: 160px;
+
+}
+div.conv-form-wrapper div.wrapper-messages {
+
+    position: relative;
+    height: 577px;
+    max-height: 71vh;
+    overflow-y: scroll;
+    transition: margin 0.1s;
+
+}
+div.conv-form-wrapper div.wrapper-messages {
+
+    min-height: 160px !important;
+    height: 200px !important;
+
 }

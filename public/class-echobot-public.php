@@ -169,7 +169,7 @@ class Echobot_Public {
 			'PublicGlobal',
 			array(
 				'ajax_url' => admin_url('admin-ajax.php'),
-				//'username' => $username,
+				'site_url' => site_url(),
 			)
 		);
 
@@ -239,6 +239,8 @@ class Echobot_Public {
 
 	public function echobot_suggested_products(){
 
+		$featured_products = array();
+
 		// The tax query
 		$tax_query[] = array(
 			'taxonomy' => 'product_visibility',
@@ -262,27 +264,19 @@ class Echobot_Public {
 
 		if ( $featured->have_posts() ) {
 
-			$featured_products = array();
-
 			while ( $featured->have_posts() ) {
 				$featured->the_post();
 				global $post;
 				$featured_products[] = array(
+					"text" => "",
+
 					"id" => $post->ID,
 					"product_title" => $post->post_title,
-					"product_name" => $post->post_name
+					"product_name" => $post->post_name,
+					'product_url' => $post->guid
 				);
 			}
 		}
-
-
-		//ob_start();
-
-		//include plugin_dir_path(__FILE__) . 'partials/echobot_featured.php';
-
-		//$featured_message = ob_get_contents();
-
-		//ob_end_clean();
 
 		echo json_encode($featured_products);
 

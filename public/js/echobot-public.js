@@ -86,10 +86,10 @@
                                         action: "echobot_suggested_products",
                                     })
 
-                                   /* .done(function (result) {
-                                        console.log(result)
-                                        var result_array = jQuery.parseJSON(result);
-                                        if(result_array.title == "no_response"){
+                                    .done(function (result) {
+                                        var featured_array = jQuery.parseJSON(result);
+                                        console.log(featured_array)
+                                        if(featured_array.length == 0){
                                             convState.current.next = convState.newState({
                                                 type: 'text',
                                                 name: 'dynamic-question-'+count,
@@ -100,18 +100,29 @@
 
                                         }
                                         else{
+
+                                            var questions = 'Great, i have some featured products for you:<br>';
+
+                                            $.each( featured_array, function( index, value ){
+                                                console.log(value)
+
+                                                questions = questions + "<a href='" + PublicGlobal.site_url + "/product/" + value.product_name + "'>" + value.product_title + "</a><br>";
+
+                                            });
+
+                                            questions = questions + "Anything more?";
+
                                             convState.current.next = convState.newState({
                                                 type: 'text',
                                                 noanswer: 'true',
                                                 name: 'dynamic-question-'+count,
-                                                questions: ['Please, follow me to the <a class=""button" href="'+result_array.url+'" target="_blank">' + result_array.title + ' </a>page' ],
-
+                                                questions: [questions ],
                                             });
                                         }
 
                                         setTimeout(ready, Math.random()*500+100);
 
-                                    });*/
+                                    });
 
                             }
 
