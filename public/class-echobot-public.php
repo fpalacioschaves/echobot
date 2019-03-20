@@ -27,7 +27,7 @@ class Echobot_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string $plugin_name The ID of this plugin.
 	 */
 	private $plugin_name;
 
@@ -36,7 +36,7 @@ class Echobot_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
 
@@ -44,13 +44,14 @@ class Echobot_Public {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 *
+	 * @param      string $plugin_name The name of the plugin.
+	 * @param      string $version The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->version     = $version;
 
 		//include("TextRazor.php");
 
@@ -104,6 +105,36 @@ class Echobot_Public {
 		);
 
 
+		// For look for productrs
+		add_action(
+			'wp_ajax_nopriv_echobot_look_for_product', array(
+				$this,
+				'echobot_look_for_product',
+			)
+		);
+
+		add_action(
+			'wp_ajax_echobot_look_for_product', array(
+				$this,
+				'echobot_look_for_product',
+			)
+		);
+
+		// For look for products question
+		add_action(
+			'wp_ajax_nopriv_echobot_look_for_message', array(
+				$this,
+				'echobot_look_for_message',
+			)
+		);
+
+		add_action(
+			'wp_ajax_echobot_look_for_message', array(
+				$this,
+				'echobot_look_for_message',
+			)
+		);
+
 
 	}
 
@@ -132,6 +163,7 @@ class Echobot_Public {
 
 		wp_enqueue_style( "convform_demo_css", plugin_dir_url( __FILE__ ) . 'css/demo.css', array(), $this->version, 'all' );
 
+		wp_enqueue_style( 'dashicons' );
 
 	}
 
@@ -156,11 +188,14 @@ class Echobot_Public {
 
 		wp_enqueue_script( "jquery_js", plugin_dir_url( __FILE__ ) . 'js/jquery-1.12.3.min.js', array( 'jquery' ), $this->version, true );
 
-		wp_enqueue_script( "autosize_js", plugin_dir_url( __FILE__ ) . 'js/autosize.min.js', array( 'jquery' ), $this->version, true );
+		//wp_enqueue_script( "autosize_js", plugin_dir_url( __FILE__ ) . 'js/autosize.min.js', array( 'jquery' ), $this->version, true );
 
-		wp_enqueue_script( "convform_js", plugin_dir_url( __FILE__ ) . 'js/jquery.convform.js', array( 'jquery' ), $this->version, true );
+		//wp_enqueue_script( "convform_js", plugin_dir_url( __FILE__ ) . 'js/jquery.convform.js', array( 'jquery' ), $this->version, true );
 
-		wp_enqueue_script( "echobot-public-js", plugin_dir_url( __FILE__ ) . 'js/echobot-public.js', array( 'jquery' ), $this->version, true );
+		wp_register_script('echobot-public-js',plugin_dir_url( __FILE__ ) . 'js/echobot-public.js', array('jquery'),$this->version, true);
+
+		wp_enqueue_script('echobot-public-js');
+
 
 		//$username = $this->echobot_is_logged();
 
@@ -168,7 +203,7 @@ class Echobot_Public {
 			"echobot-public-js",
 			'PublicGlobal',
 			array(
-				'ajax_url' => admin_url('admin-ajax.php'),
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'site_url' => site_url(),
 			)
 		);
@@ -176,11 +211,11 @@ class Echobot_Public {
 
 	}
 
-	public function echobot_parse_ask_question(){
+	public function echobot_parse_ask_question() {
 
 		$answer = $_POST["answer"];
 
-		$answer_array = explode(" ",$answer);
+		$answer_array = explode( " ", $answer );
 
 		// Opciones del array de palabras
 
@@ -190,54 +225,70 @@ class Echobot_Public {
 
 
 		// a) Vamos a buscar si existe alguna página a la que se haga referencia desde la pregunta
-		$args = array(
-			'sort_order' => 'asc',
-			'sort_column' => 'post_title',
+		$args     = array(
+			'sort_order'   => 'asc',
+			'sort_column'  => 'post_title',
 			'hierarchical' => 0,
-			'parent' => -1,
-			'post_type' => 'page',
-			'post_status' => 'publish'
+			'parent'       => - 1,
+			'post_type'    => 'page',
+			'post_status'  => 'publish'
 		);
 		$response = array(
-			"title" =>"no_response"
+			"title" => "no_response"
 		);
-		$pages = get_pages($args);
-		foreach($pages as $page){
+		$pages    = get_pages( $args );
+		foreach ( $pages as $page ) {
 
-			$pos = strpos(strtolower ($answer), strtolower ($page->post_name));
-			if ($pos !== false){
-				$response =  array(
-					"title"=>$page->post_title,
-					"url"=>get_page_link( $page->ID)
+			$pos = strpos( strtolower( $answer ), strtolower( $page->post_name ) );
+			if ( $pos !== false ) {
+				$response = array(
+					"title" => $page->post_title,
+					"url"   => get_page_link( $page->ID )
 				);
 			}
 		}
 
 
-		 echo json_encode($response);
+		echo json_encode( $response );
 
 		wp_die();
 	}
 
 
-	public function echobot_welcome(){
+	public function echobot_welcome() {
 
 
-			ob_start();
+		ob_start();
 
-			include plugin_dir_path(__FILE__) . 'partials/echobot_welcome.php';
+		include plugin_dir_path( __FILE__ ) . 'partials/echobot_welcome.php';
 
-			$welcome_message = ob_get_contents();
+		$welcome_message = ob_get_contents();
 
-			ob_end_clean();
+		ob_end_clean();
 
-			echo $welcome_message;
+		echo $welcome_message;
 
-			wp_die();
+		wp_die();
 
 	}
 
-	public function echobot_suggested_products(){
+	public function echobot_look_for_message() {
+
+		ob_start();
+
+		include plugin_dir_path( __FILE__ ) . 'partials/echobot_look_for_message.php';
+
+		$look_for_message = ob_get_contents();
+
+		ob_end_clean();
+
+		echo $look_for_message;
+
+		wp_die();
+
+	}
+
+	public function echobot_suggested_products() {
 
 		$featured_products = array();
 
@@ -270,21 +321,61 @@ class Echobot_Public {
 				$featured_products[] = array(
 					"text" => "",
 
-					"id" => $post->ID,
+					"id"            => $post->ID,
 					"product_title" => $post->post_title,
-					"product_name" => $post->post_name,
-					'product_url' => $post->guid
+					"product_name"  => $post->post_name,
+					'product_url'   => $post->guid
 				);
 			}
 		}
 
-		echo json_encode($featured_products);
+		echo json_encode( $featured_products );
 
 		wp_die();
 
 	}
 
+	public function echobot_look_for_product() {
 
+		$look_for = $_POST['product'];
+
+		$look_for_products = array();
+
+		if($look_for != ""){
+
+			// The query
+			$looking_query = new WP_Query( array(
+				'post_type'           => 'product',
+				'post_status'         => 'publish',
+				's'                   => $look_for,
+				'ignore_sticky_posts' => 1,
+				'posts_per_page'      => 5,
+				'orderby'             => "date",
+				'order'               => 'DESC',
+			) );
+
+			if ( $looking_query->have_posts() ) {
+
+				while ( $looking_query->have_posts() ) {
+					$looking_query->the_post();
+					global $post;
+					$look_for_products[] = array(
+						"text" => "",
+						"id"            => $post->ID,
+						"product_title" => $post->post_title,
+						"product_name"  => $post->post_name,
+						'product_url'   => $post->guid
+					);
+				}
+			}
+
+		}
+
+		echo json_encode( $look_for_products );
+
+		wp_die();
+
+	}
 
 
 }
