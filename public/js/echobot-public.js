@@ -3,11 +3,9 @@
 
 	var logged = false;
 
-    var welcome_message
+    var welcome_message, look_for_message, contact_message, question_message
 
-    var look_for_message
 
-    var convForm;
 
     $(document).ready(function () {
 
@@ -85,6 +83,44 @@
 
     });
 
+    // Send input looking for
+    $(document).on("click", ".echobot-send-question", function (e) {
+        e.preventDefault();
+        var answer = $("#echobot-input-question").val();
+        // AJAX CALL
+        $.post(PublicGlobal.ajax_url,
+            {
+                action: "echobot_parse_ask_question",
+                answer: answer,
+            })
+            .done(function (result) {
+                var answers_array = jQuery.parseJSON(result);
+                console.log(answers_array)
+                if(answers_array.length == 0){
+                    answer = '<p>Sorry, i dont find any content as ' + question + '</p>'
+                    answer = answer + "<button class='myButtonGreen' data-action='refresh'>Anything more?</button>";
+                    setTimeout(ready(answer), 5000);
+                    $(".echobot-input-container-question").show();
+                }
+
+                else{
+
+                    var answer = '<p>Great, i have found something for you:</p>';
+                    $.each( answers_array, function( index, value ){
+                        console.log(index + " " + value)
+                        answer = answer + "<a class='myButtonGreen' href='" + value.url + "'><span class='left title'>" + value.title + "</span></a>";
+                    });
+                    answer = answer + "<button class='myButtonGreen' data-action='refresh'>Anything more?</button>";
+                    setTimeout(ready(answer), 5000);
+                    $(".echobot-input-container").show();
+                }
+
+
+
+            });
+
+    });
+
     // Select option
     $(document).on("click", "button.myButtonGreen", function (e) {
         e.preventDefault();
@@ -141,6 +177,37 @@
                 look_for_message = result;
                 //$(".echobot-input-container").show();
                 setTimeout(ready(look_for_message), 5000);
+            });
+    }
+
+    // For Question Option
+    function question(){
+
+        // Look for  message
+        $.post(PublicGlobal.ajax_url,
+            {
+                action: "echobot_question_message",
+            })
+            .done(function (result) {
+                console.log(result)
+                question_message = result;
+                //$(".echobot-input-container").show();
+                setTimeout(ready(question_message), 5000);
+            });
+    }
+
+    // For Company Option
+    function company(){
+        // AJAX CALL
+        // Welcome message
+        $.post(PublicGlobal.ajax_url,
+            {
+                action: "echobot_company",
+            })
+
+            .done(function (result) {
+                contact_message = result;
+                setTimeout(ready(contact_message), 5000);
             });
     }
 

@@ -135,6 +135,41 @@ class Echobot_Public {
 			)
 		);
 
+		// For Company
+		add_action(
+			'wp_ajax_nopriv_echobot_company', array(
+				$this,
+				'echobot_company',
+			)
+		);
+
+		add_action(
+			'wp_ajax_echobot_company', array(
+				$this,
+				'echobot_company',
+			)
+		);
+
+		// For Question
+		add_action(
+			'wp_ajax_nopriv_echobot_question_message', array(
+				$this,
+				'echobot_question_message',
+			)
+		);
+
+		add_action(
+			'wp_ajax_echobot_question_message', array(
+				$this,
+				'echobot_question_message',
+			)
+		);
+
+
+
+
+
+
 
 	}
 
@@ -217,11 +252,6 @@ class Echobot_Public {
 
 		$answer_array = explode( " ", $answer );
 
-		// Opciones del array de palabras
-
-		// Está la palabra "see" como en "i want to see"
-
-		// Está la palabra "buy" como en "i want to buy"
 
 
 		// a) Vamos a buscar si existe alguna página a la que se haga referencia desde la pregunta
@@ -233,15 +263,13 @@ class Echobot_Public {
 			'post_type'    => 'page',
 			'post_status'  => 'publish'
 		);
-		$response = array(
-			"title" => "no_response"
-		);
+		$response = array();
 		$pages    = get_pages( $args );
 		foreach ( $pages as $page ) {
 
 			$pos = strpos( strtolower( $answer ), strtolower( $page->post_name ) );
 			if ( $pos !== false ) {
-				$response = array(
+				$response[] = array(
 					"title" => $page->post_title,
 					"url"   => get_page_link( $page->ID )
 				);
@@ -272,6 +300,22 @@ class Echobot_Public {
 
 	}
 
+	public function echobot_company() {
+
+		ob_start();
+
+		include plugin_dir_path( __FILE__ ) . 'partials/echobot_company.php';
+
+		$company_message = ob_get_contents();
+
+		ob_end_clean();
+
+		echo $company_message;
+
+		wp_die();
+
+	}
+
 	public function echobot_look_for_message() {
 
 		ob_start();
@@ -283,6 +327,22 @@ class Echobot_Public {
 		ob_end_clean();
 
 		echo $look_for_message;
+
+		wp_die();
+
+	}
+
+	public function echobot_question_message() {
+
+		ob_start();
+
+		include plugin_dir_path( __FILE__ ) . 'partials/echobot_question_message.php';
+
+		$question_message = ob_get_contents();
+
+		ob_end_clean();
+
+		echo $question_message;
 
 		wp_die();
 
