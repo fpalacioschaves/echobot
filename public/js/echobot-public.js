@@ -36,7 +36,7 @@
     // Close Chat
     $(document).on("click", ".close-chat", function () {
         $(".echobot-form").hide();
-        $(".card").css("width", "7%");
+        $(".card").css("width", "8%");
         $(this).hide();
         $(".open-chat").show();
     });
