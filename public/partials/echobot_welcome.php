@@ -14,7 +14,7 @@ if ( is_user_logged_in() ) {
 }
 ?>
 
-<div class="card no-border">
+<div class="card no-border" id="card">
     <div id="chat-header">EchoBot
         <div class="close-chat"></div>
         <div class="open-chat"></div>
@@ -26,7 +26,7 @@ if ( is_user_logged_in() ) {
                     me
                     Refresh to clean chat)</p>
             </div>
-            <div class="answer">
+            <div class="answer" id=""answer>
                 <button class="myButtonGreen" data-action="suggestion">Make me any suggestion</button>
                 <button class="myButtonGreen" data-action="looking_for">Im looking for a product</button>
                 <button class="myButtonGreen" data-action="company">I want info about the company</button>

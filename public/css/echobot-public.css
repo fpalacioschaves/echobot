@@ -21,10 +21,18 @@
     -moz-border-radius: 10px;
     border-radius: 10px;
     max-height: 500px;
+    overflow-y: scroll;
+
+
+
 }
 
 .conv-form-wrapper{
     /*display: none;*/
+}
+
+#chat{
+
 }
 
 
@@ -55,12 +63,6 @@ div.conv-form-wrapper div.options div.option {
 }
 
 
-elemento {
-
-    margin-bottom: 0px;
-    max-height: 160px;
-
-}
 div.conv-form-wrapper div.wrapper-messages {
 
     position: relative;
@@ -140,6 +142,7 @@ div.conv-form-wrapper div.wrapper-messages {
     margin: 10px;
     width: 80%;
     background: none;
+    float: left;
 }
 
 .answer{
@@ -147,6 +150,7 @@ div.conv-form-wrapper div.wrapper-messages {
     width: 100%;
     font-size: 13px;
     margin: 10px;
+
 }
 
 .answer p{
@@ -161,9 +165,7 @@ div.conv-form-wrapper div.wrapper-messages {
 }
 
 .echobot-send, .echobot-send-look-for, .echobot-send-question{
-    position: absolute;
-    bottom: 43px;
-    right: 20px;
+
     font-size: 13px;
     -moz-border-radius:4px;
     -webkit-border-radius:4px;
@@ -171,11 +173,11 @@ div.conv-form-wrapper div.wrapper-messages {
     border:1px solid #4b8f29;
     padding:6px 12px;
     background: none;
+    float: left;
+    margin: 10px 0;
 }
 
-.echobot-send-look-for, .echobot-send-question{
-    bottom: 53px;
-}
+
 
 .echobot-send:hover, .echobot-send-look-for:hover, .echobot-send-question:hover{
     background: none !important;
@@ -185,6 +187,7 @@ div.conv-form-wrapper div.wrapper-messages {
 .echobot-input-container{
     display: none;
 }
+
 
 
 

@@ -1,24 +1,35 @@
-(function( $ ) {
-	'use strict';
+(function ($) {
+    'use strict';
 
-	var logged = false;
+    var logged = false;
 
-    var welcome_message, look_for_message, contact_message, question_message
-
+    var welcome_message, look_for_message, contact_message, question_message, answer
 
 
     $(document).ready(function () {
 
-        // Welcome message
-        $.post(PublicGlobal.ajax_url,
-            {
-                action: "echobot_welcome",
-            })
+        var current_chat = localStorage['current_chat'];
+        if (!current_chat) {
+            // open popup
+            localStorage['current_chat'] = "";
+            // Welcome message
+            $.post(PublicGlobal.ajax_url,
+                {
+                    action: "echobot_welcome",
+                })
 
-            .done(function (result) {
-                welcome_message = result;
-                $("#content").append(welcome_message);
-            });
+                .done(function (result) {
+                    welcome_message = result;
+                    $("#content").append(welcome_message);
+                    localStorage["welcome_message"] = welcome_message
+                });
+        }
+        else{
+            $("#content").append(localStorage['current_chat']);
+        }
+
+
+
 
     });
 
@@ -42,7 +53,7 @@
     $(document).on("click", ".echobot-send", function (e) {
         e.preventDefault();
         var answer = $("#echobot-input").val();
-        eval(answer+"()");
+        eval(answer + "()");
 
     });
 
@@ -59,24 +70,23 @@
             .done(function (result) {
                 var find_array = jQuery.parseJSON(result);
                 console.log(find_array)
-                if(find_array.length == 0){
+                if (find_array.length == 0) {
                     answer = '<p>Sorry, i dont find any product like ' + question + '</p>'
                     answer = answer + "<button class='myButtonGreen' data-action='refresh'>Anything more?</button>";
                     setTimeout(ready(answer), 5000);
                     $(".echobot-input-container-look-for").show();
                 }
 
-                else{
+                else {
 
                     var answer = '<p>Great, i have found some products for you:</p>';
-                    $.each( find_array, function( index, value ){
+                    $.each(find_array, function (index, value) {
                         answer = answer + "<a class='myButtonGreen' href='" + PublicGlobal.site_url + "/product/" + value.product_name + "'><span class='left title'>" + value.product_title + "</span><span class='dashicons dashicons-cart'></span></a>";
                     });
                     answer = answer + "<button class='myButtonGreen' data-action='refresh'>Anything more?</button>";
                     setTimeout(ready(answer), 5000);
                     $(".echobot-input-container").show();
                 }
-
 
 
             });
@@ -86,27 +96,27 @@
     // Send input looking for
     $(document).on("click", ".echobot-send-question", function (e) {
         e.preventDefault();
-        var answer = $("#echobot-input-question").val();
+        var question_answer = $("#echobot-input-question").val();
         // AJAX CALL
         $.post(PublicGlobal.ajax_url,
             {
                 action: "echobot_parse_ask_question",
-                answer: answer,
+                answer: question_answer,
             })
             .done(function (result) {
                 var answers_array = jQuery.parseJSON(result);
                 console.log(answers_array)
-                if(answers_array.length == 0){
-                    answer = '<p>Sorry, i dont find any content as ' + question + '</p>'
+                if (answers_array.length == 0) {
+                    answer = '<p>Sorry, i dont find any content as ' + question_answer + '</p>'
                     answer = answer + "<button class='myButtonGreen' data-action='refresh'>Anything more?</button>";
                     setTimeout(ready(answer), 5000);
                     $(".echobot-input-container-question").show();
                 }
 
-                else{
+                else {
 
                     var answer = '<p>Great, i have found something for you:</p>';
-                    $.each( answers_array, function( index, value ){
+                    $.each(answers_array, function (index, value) {
                         console.log(index + " " + value)
                         answer = answer + "<a class='myButtonGreen' href='" + value.url + "'><span class='left title'>" + value.title + "</span></a>";
                     });
@@ -114,7 +124,6 @@
                     setTimeout(ready(answer), 5000);
                     $(".echobot-input-container").show();
                 }
-
 
 
             });
@@ -125,18 +134,27 @@
     $(document).on("click", "button.myButtonGreen", function (e) {
         e.preventDefault();
         var action = $(this).attr("data-action")
-        eval(action+"()");
+        eval(action + "()");
     });
 
 
     // Para actualizar el chat con la respuesta correspondiente
-    function ready(answer){
-        $(".answer").html(answer)
+    function ready(answer) {
+
+        $(".answer").append(answer)
+
+        var objDiv = document.getElementById("card");
+        objDiv.scrollTop = objDiv.scrollHeight;
+
+        var stored_chat = localStorage['current_chat'];
+        var new_chat = '<div class="card no-border" id="card">' + $(".card").html() + '</div>';
+        localStorage['current_chat'] = new_chat;
+
     }
 
 
     // For Suggestion Option
-    function suggestion(){
+    function suggestion() {
         // AJAX CALL
         $.post(PublicGlobal.ajax_url,
             {
@@ -145,13 +163,13 @@
             .done(function (result) {
                 var featured_array = jQuery.parseJSON(result);
                 console.log(featured_array)
-                if(featured_array.length == 0){
+                if (featured_array.length == 0) {
                 }
 
-                else{
+                else {
 
                     var answer = '<p>Great, i have some featured products for you:</p>';
-                    $.each( featured_array, function( index, value ){
+                    $.each(featured_array, function (index, value) {
                         answer = answer + "<a class='myButtonGreen' href='" + PublicGlobal.site_url + "/product/" + value.product_name + "'><span class='left title'>" + value.product_title + "</span><span class='dashicons dashicons-cart'></span></a>";
                     });
                     answer = answer + "<button class='myButtonGreen' data-action='refresh'>Anything more?</button>";
@@ -160,12 +178,11 @@
                 }
 
 
-
             });
     }
 
     // For Looking For Option
-    function looking_for(){
+    function looking_for() {
 
         // Look for  message
         $.post(PublicGlobal.ajax_url,
@@ -181,7 +198,7 @@
     }
 
     // For Question Option
-    function question(){
+    function question() {
 
         // Look for  message
         $.post(PublicGlobal.ajax_url,
@@ -197,7 +214,7 @@
     }
 
     // For Company Option
-    function company(){
+    function company() {
         // AJAX CALL
         // Welcome message
         $.post(PublicGlobal.ajax_url,
@@ -212,20 +229,18 @@
     }
 
     // Clean the chat
-    function refresh(){
-        $("#content").html(welcome_message);
+    function refresh() {
+        console.log(welcome_message)
+        localStorage["current_chat"] = "";
+        $("#content").html(localStorage["welcome_message"]);
     }
 
 
-
-    $('html').bind('keypress', function(e)
-    {
-        if(e.keyCode == 13)
-        {
+    $('html').bind('keypress', function (e) {
+        if (e.keyCode == 13) {
             return false;
         }
     });
 
 
-
-})( jQuery );
+})(jQuery);
